@@ -1,0 +1,10 @@
+.venv
+.vscode
+.env
+.env.production
+.mypy_cache
+.pytest_cache
+__pycache__
+*.pyc
+./bgtasks
+test.py

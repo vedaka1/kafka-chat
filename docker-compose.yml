@@ -1,0 +1,53 @@
+version: '3.8'
+
+name: kafka-chat
+
+services:
+
+  auth-service:
+    &auth-service
+    container_name: auth-service
+    hostname: auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build: 
+      context: ./services/auth/
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./services/auth/.env.production
+    networks:
+      - internal
+    ports:
+      - 8000:8000
+    volumes:
+      - ./services/auth/src:/app/src
+    command: sh -c "alembic upgrade head && uvicorn src.presentation.main:create_app --host 0.0.0.0 --port 8000 --reload"
+
+  postgres:
+    image: postgres:16-bookworm
+    container_name: postgres
+    hostname: postgres
+    env_file:
+      - ./services/auth/.env.production
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - internal
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+
+
+    
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+    driver: bridge
