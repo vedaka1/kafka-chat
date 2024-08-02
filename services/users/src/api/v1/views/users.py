@@ -32,7 +32,7 @@ def get_users_list_command(
 
 
 @router.get(
-    "/",
+    "",
     summary="Get users list",
 )
 async def get_users_list(

@@ -108,7 +108,7 @@ class UserRepository(BaseUserRepository):
     async def count_many(self, search: str | None = None) -> int:
         if search:
             query = select(func.count()).where(
-                UserModel.name.like("{0}".format(search.lower()))
+                UserModel.username.like("{0}".format(search.lower()))
             )
         else:
             query = select(func.count())

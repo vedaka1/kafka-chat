@@ -3,13 +3,12 @@ from dataclasses import dataclass
 
 from src.api.v1.schemas import ListPaginatedResponse, PaginationOutSchema, UserOut
 from src.domain.commands import GetUsersListCommand
-from src.gateways.postgresql.repositories import BaseUserRepository
-from src.services.user import UserService
+from src.domain.services import BaseUserService
 
 
 @dataclass
 class GetUsersListUseCase:
-    user_service: UserService
+    user_service: BaseUserService
 
     async def execute(
         self, command: GetUsersListCommand
@@ -43,7 +42,7 @@ class GetUsersListUseCase:
 
 @dataclass
 class GetUserUseCase:
-    user_service: UserService
+    user_service: BaseUserService
 
     async def execute(self, user_id: uuid.UUID) -> UserOut:
         user = await self.user_service.get_by_id(id=user_id)

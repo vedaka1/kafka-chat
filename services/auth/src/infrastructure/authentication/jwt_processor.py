@@ -5,6 +5,7 @@ from uuid import UUID
 import jwt
 
 from src.application.common.jwt_processor import BaseJwtTokenProcessor
+from src.domain.exceptions.base import ApplicationException
 from src.domain.exceptions.user import TokenExpiredException
 from src.infrastructure.config import settings
 
@@ -31,8 +32,10 @@ class JwtTokenProcessor(BaseJwtTokenProcessor):
                 algorithms=[settings.jwt.ALGORITHM],
             )
             user_id = payload.get("sub")
-            if datetime.fromtimestamp(payload.get("exp")) > datetime.now():
+            if datetime.fromtimestamp(payload.get("exp")) <= datetime.now():
                 raise TokenExpiredException
             return UUID(user_id)
+        except jwt.ExpiredSignatureError:
+            raise TokenExpiredException
         except (jwt.DecodeError, ValueError, KeyError):
-            return None
+            return ApplicationException

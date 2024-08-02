@@ -3,12 +3,13 @@ from dataclasses import dataclass
 
 from src.domain.entities import User
 from src.domain.exceptions import UserNotFoundException
+from src.domain.services import BaseUserService
 from src.gateways.postgresql.dto import UserDto
 from src.gateways.postgresql.repositories import BaseUserRepository
 
 
 @dataclass
-class UserService:
+class UserService(BaseUserService):
     user_repository: BaseUserRepository
 
     async def update(self, id: uuid.UUID, user: User) -> None:

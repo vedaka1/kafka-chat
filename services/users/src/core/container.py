@@ -15,6 +15,7 @@ from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from src.core.settings import settings
+from src.domain.services import BaseUserService
 from src.domain.use_cases import GetUsersListUseCase, GetUserUseCase
 from src.gateways.postgresql.database import create_engine, create_session_factory
 from src.gateways.postgresql.repositories import BaseUserRepository, UserRepository
@@ -81,7 +82,7 @@ class UseCasesProvider(Provider):
 class ServiceProvider(Provider):
     scope = Scope.REQUEST
 
-    user_service = provide(UserService)
+    user_service = provide(UserService, provides=BaseUserService)
 
 
 @lru_cache(1)
