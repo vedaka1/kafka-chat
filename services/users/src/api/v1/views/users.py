@@ -51,3 +51,12 @@ async def get_current_user(
 ) -> APIResponse[UserOut]:
     response = await get_user_interactor.execute(user_id)
     return APIResponse(ok=True, data=response)
+
+
+@router.get("/{user_id}", summary="Get user by id")
+async def get_user_by_id(
+    user_id: UUID,
+    get_user_interactor: FromDishka[GetUserUseCase],
+) -> APIResponse[UserOut]:
+    response = await get_user_interactor.execute(user_id)
+    return APIResponse(ok=True, data=response)

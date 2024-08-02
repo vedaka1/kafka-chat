@@ -9,17 +9,18 @@ from src.services.user import UserService
 
 @dataclass
 class GetUsersListUseCase:
-    user_repository: BaseUserRepository
+    user_service: UserService
 
     async def execute(
         self, command: GetUsersListCommand
     ) -> ListPaginatedResponse[UserOut]:
-        users = await self.user_repository.find_many(
+
+        users = await self.user_service.find_many(
             limit=command.pagiantion.limit,
             offset=command.pagiantion.offset,
             search=command.search,
         )
-        count = await self.user_repository.count_many()
+        count = await self.user_service.count_many(search=command.search)
         return ListPaginatedResponse(
             items=[
                 UserOut(

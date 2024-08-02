@@ -7,7 +7,7 @@ services:
   auth-service:
     &auth-service
     container_name: auth-service
-    hostname: auth
+    hostname: auth.service
     depends_on:
       postgres:
         condition: service_healthy
@@ -23,6 +23,25 @@ services:
     volumes:
       - ./services/auth/src:/app/src
     command: sh -c "alembic upgrade head && uvicorn src.presentation.main:create_app --host 0.0.0.0 --port 8000 --reload"
+
+  user-service:
+    container_name: user-service
+    hostname: user.service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build: 
+      context: ./services/users/
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./services/users/.env.production
+    networks:
+      - internal
+    ports:
+      - 8001:8000
+    volumes:
+      - ./services/users/src:/app/src
+    command: sh -c "uvicorn src.main:create_app --host 0.0.0.0 --port 8000 --reload"
 
   postgres:
     image: postgres:16-bookworm

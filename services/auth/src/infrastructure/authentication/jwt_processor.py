@@ -5,6 +5,7 @@ from uuid import UUID
 import jwt
 
 from src.application.common.jwt_processor import BaseJwtTokenProcessor
+from src.domain.exceptions.user import TokenExpiredException
 from src.infrastructure.config import settings
 
 
@@ -14,7 +15,7 @@ class JwtTokenProcessor(BaseJwtTokenProcessor):
         to_encode = {
             "sub": str(user_id),
             "exp": datetime.now(timezone.utc)
-            + timedelta(minutes=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60),
+            + timedelta(minutes=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES),
         }
         encoded_jwt = jwt.encode(
             to_encode, settings.jwt.PRIVATE_KEY, algorithm=settings.jwt.ALGORITHM
@@ -30,6 +31,8 @@ class JwtTokenProcessor(BaseJwtTokenProcessor):
                 algorithms=[settings.jwt.ALGORITHM],
             )
             user_id = payload.get("sub")
+            if datetime.fromtimestamp(payload.get("exp")) > datetime.now():
+                raise TokenExpiredException
             return UUID(user_id)
         except (jwt.DecodeError, ValueError, KeyError):
             return None

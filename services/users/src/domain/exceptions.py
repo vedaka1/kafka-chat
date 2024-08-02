@@ -32,3 +32,9 @@ class UserIsNotAuthorizedException(ApplicationException):
 class UserAlreadyExistsException(ApplicationException):
     status_code: int = 400
     message: str = "User already exists"
+
+
+@dataclass(eq=False, init=False)
+class TokenExpiredException(ApplicationException):
+    status_code: int = 404
+    message: str = "Your access token has expired"
