@@ -13,20 +13,10 @@ class DBConfig:
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
 
-class JwtConfig:
-    PRIVATE_KEY: str = os.environ.get("PRIVATE_KEY")
-    PUBLIC_KEY: str = os.environ.get("PUBLIC_KEY")
-    ALGORITHM: str = os.environ.get("ALGORITHM", default="RS256")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
-        os.environ.get("EXPIRATION_DELTA", default=5)
-    )
-
-
 class Config:
     MODE: str = os.environ.get("MODE", default="DEV")
 
     db: DBConfig = DBConfig()
-    jwt: JwtConfig = JwtConfig()
 
 
 settings = Config()

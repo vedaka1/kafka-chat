@@ -20,7 +20,7 @@ class LoginUseCase:
     transaction_manager: BaseTransactionManager
 
     async def execute(self, command: LoginCommand) -> tuple[UserOut, Token]:
-        user = await self.user_repository.get_by_email(command.email)
+        user = await self.user_repository.get_by_email(command.username)
         if not user:
             raise UserInvalidCredentialsException
         if not self.password_hasher.verify(
@@ -38,7 +38,7 @@ class LoginUseCase:
         )
         token = Token(
             access_token=access_token,
-            max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES,
+            max_age=settings.jwt.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             token_type="access",
         )
         return user_out, token

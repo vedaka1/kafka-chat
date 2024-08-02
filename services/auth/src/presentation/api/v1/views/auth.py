@@ -1,13 +1,16 @@
+from typing import Annotated
+
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.application.contracts.commands.user import *
+from src.application.contracts.common.cert import Cert, CertsResponse
 from src.application.contracts.common.response import APIResponse
 from src.application.contracts.responses.user import UserOut
 from src.application.usecases.auth import *
 from src.application.usecases.auth.login import LoginUseCase
-from src.domain.users.user import User
+from src.infrastructure.config import settings
 
 router = APIRouter(
     tags=["Auth"],
@@ -28,18 +31,32 @@ async def register(
 @router.post("/login", summary="Authenticate user")
 async def login(
     login_interactor: FromDishka[LoginUseCase],
-    command: LoginCommand,
     response: Response,
-    # credentials: OAuth2PasswordRequestForm = Depends(),
+    login_command: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> APIResponse[UserOut]:
-    # user, token = await login_interactor.execute(
-    #     LoginCommand(password=credentials.password, email=credentials.username)
-    # )
-    user, token = await login_interactor.execute(command)
+    user, token = await login_interactor.execute(
+        LoginCommand(password=login_command.password, username=login_command.username)
+    )
     response.set_cookie(
         "access_token",
         token.access_token,
         max_age=token.max_age,
         httponly=True,
+        secure=True,
     )
     return APIResponse(ok=True, data=user)
+
+
+@router.post("/logout", summary="Logout")
+async def logout(
+    response: Response,
+) -> APIResponse[UserOut]:
+    response.delete_cookie("access_token")
+    return APIResponse(ok=True)
+
+
+@router.get("/certs", summary="A list of public keys to validate JWT Token")
+async def certs() -> APIResponse[Cert]:
+    return APIResponse(
+        ok=True, data=Cert(alg="RS256", kty="RSA", key=settings.jwt.PUBLIC_KEY)
+    )

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 
 from src.application.common.password_hasher import BasePasswordHasher
 from src.application.common.transaction import BaseTransactionManager

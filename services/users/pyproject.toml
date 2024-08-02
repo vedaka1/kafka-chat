@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "auth"
+name = "users"
 version = "0.1.0"
 description = ""
 authors = ["vedaka1 <vladik.kuleshov.2003@mail.ru>"]
@@ -7,14 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.111.1"
+fastapi = "^0.112.0"
 sqlalchemy = "^2.0.31"
 asyncpg = "^0.29.0"
-alembic = "^1.13.2"
 dishka = "^1.2.0"
-python-logging-loki = "^0.3.1"
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 pyjwt = {extras = ["crypto"], version = "^2.9.0"}
+aiohttp = "^3.10.0"
+uvicorn = "^0.30.5"
 
 
 [tool.poetry.group.test.dependencies]

@@ -1,10 +1,8 @@
 import logging
 import logging.handlers
 from functools import lru_cache
-from multiprocessing import Queue
 from typing import AsyncGenerator
 
-import logging_loki
 from dishka import (
     AsyncContainer,
     Provider,
@@ -16,21 +14,17 @@ from dishka import (
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
-from src.application.common.id_provider import BaseIdProvider
-from src.application.common.jwt_processor import BaseJwtTokenProcessor
-from src.application.common.password_hasher import BasePasswordHasher
-from src.application.common.transaction import BaseTransactionManager
-from src.application.usecases.auth import *
-from src.application.usecases.auth.login import LoginUseCase
-from src.application.usecases.users import *
-from src.domain.users.repository import BaseUserRepository
-from src.infrastructure.authentication.id_provider import JwtTokenIdProvider
-from src.infrastructure.authentication.jwt_processor import JwtTokenProcessor
-from src.infrastructure.authentication.password_hasher import PasswordHasher
-from src.infrastructure.config import settings
-from src.infrastructure.persistence.main import create_engine, create_session_factory
-from src.infrastructure.persistence.repositories import UserRepository
-from src.infrastructure.persistence.transaction import TransactionManager
+from src.core.settings import settings
+from src.domain.use_cases import GetUsersListUseCase, GetUserUseCase
+from src.gateways.postgresql.database import create_engine, create_session_factory
+from src.gateways.postgresql.repositories import BaseUserRepository, UserRepository
+from src.gateways.postgresql.transaction import (
+    BaseTransactionManager,
+    TransactionManager,
+)
+from src.services.user import UserService
+from src.utils.id_provider import BaseIdProvider, JwtTokenIdProvider
+from src.utils.jwt_processor import BaseJwtTokenProcessor, JwtTokenProcessor
 
 
 @lru_cache(1)
@@ -44,16 +38,6 @@ def init_logger() -> None:
     return None
 
 
-@lru_cache(1)
-def init_loki_logger(app_name: str = "app"):
-    return logging_loki.LokiQueueHandler(
-        Queue(-1),
-        url="http://loki:3100/loki/api/v1/push",
-        tags={"application": app_name},
-        version="1",
-    )
-
-
 class SettingsProvider(Provider):
     @provide(scope=Scope.APP)
     def engine(self) -> AsyncEngine:
@@ -65,22 +49,9 @@ class SettingsProvider(Provider):
 
 
 class SecurityProvider(Provider):
-    request = from_context(
-        scope=Scope.REQUEST,
-        provides=Request,
-    )
-    password_hasher = provide(
-        PasswordHasher, provides=BasePasswordHasher, scope=Scope.APP
-    )
     jwt_processor = provide(
         JwtTokenProcessor, provides=BaseJwtTokenProcessor, scope=Scope.APP
     )
-
-    @provide(scope=Scope.REQUEST, provides=BaseIdProvider)
-    def id_provider(
-        self, token_processor: BaseJwtTokenProcessor, request: Request
-    ) -> BaseIdProvider:
-        return JwtTokenIdProvider(token_processor=token_processor, token=request.auth)
 
 
 class DatabaseConfigurationProvider(Provider):
@@ -104,8 +75,13 @@ class UseCasesProvider(Provider):
     scope = Scope.REQUEST
 
     get_users_list = provide(GetUsersListUseCase)
-    register = provide(RegisterUseCase)
-    login = provide(LoginUseCase)
+    get_user = provide(GetUserUseCase)
+
+
+class ServiceProvider(Provider):
+    scope = Scope.REQUEST
+
+    user_service = provide(UserService)
 
 
 @lru_cache(1)
@@ -116,4 +92,5 @@ def get_container() -> AsyncContainer:
         DatabaseAdaptersProvider(),
         UseCasesProvider(),
         SecurityProvider(),
+        ServiceProvider(),
     )

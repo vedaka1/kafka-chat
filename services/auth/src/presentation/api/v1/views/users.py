@@ -1,5 +1,5 @@
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from src.application.contracts.commands.user import *
 from src.application.contracts.common.pagination import ListPaginatedResponse
@@ -30,6 +30,7 @@ def get_users_list_command(
 @router.get("", summary="Get a list of users")
 async def get_users(
     get_users_interactor: FromDishka[GetUsersListUseCase],
+    request: Request,
     command: GetUsersListCommand = Depends(get_users_list_command),
 ) -> APIResponse[ListPaginatedResponse[UserOut]]:
     response = await get_users_interactor.execute(command)

@@ -15,7 +15,7 @@ class RegisterCommand:
 @dataclass
 class LoginCommand:
     password: str
-    email: str
+    username: str
 
 
 @dataclass
