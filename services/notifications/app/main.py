@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 import orjson
-from aiosmtplib import SMTPException, SMTPServerDisconnected
+from aiosmtplib import SMTPException
 from src.core.container import get_container, init_logger
 from src.domain.events import NewUserRegistered
 from src.gateways.message_broker.base import BaseMessageConsumer

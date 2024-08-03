@@ -60,6 +60,7 @@ class AsyncSMTPServer(BaseSMTPServer):
     subject: str
 
     async def start(self) -> None:
+        logger.info("Starting smtp server")
         await self.server.connect()
 
     def create_message(self, content: str, to_address: str) -> EmailMessage:
@@ -74,10 +75,10 @@ class AsyncSMTPServer(BaseSMTPServer):
         return await self.server.send_message(message)
 
     async def stop(self) -> None:
+        logger.info("Stopping smtp server")
         await self.server.quit()
 
     async def check_connection(self):
         if self.server.is_connected == False:
-            logger.info("SMTP server is not connected")
             self.server.close()
             await self.server.connect()

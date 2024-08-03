@@ -29,9 +29,9 @@ class RegisterUseCase:
     broker_topic = "notifications"
 
     async def execute(self, command: RegisterCommand) -> None:
-        # user_exists = await self.user_repository.get_by_email(command.email)
-        # if user_exists:
-        #     raise UserAlreadyExistsException
+        user_exists = await self.user_repository.get_by_email(command.email)
+        if user_exists:
+            raise UserAlreadyExistsException
         hashed_password = self.password_hasher.hash(command.password)
         user = User.create(
             username=command.username,
