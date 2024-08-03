@@ -1,9 +1,12 @@
+import logging
 import smtplib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from email.message import EmailMessage
 
 import aiosmtplib
+
+logger = logging.getLogger()
 
 
 @dataclass
@@ -68,11 +71,13 @@ class AsyncSMTPServer(BaseSMTPServer):
         return message
 
     async def send_email(self, message: EmailMessage) -> None:
-        await self.server.send_message(message)
+        return await self.server.send_message(message)
 
     async def stop(self) -> None:
         await self.server.quit()
 
     async def check_connection(self):
-        if not self.server.is_connected:
+        if self.server.is_connected == False:
+            logger.info("SMTP server is not connected")
+            self.server.close()
             await self.server.connect()

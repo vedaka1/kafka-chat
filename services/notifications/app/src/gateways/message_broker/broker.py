@@ -1,10 +1,12 @@
+import logging
 from dataclasses import dataclass
 from typing import AsyncIterator
 
 import orjson
 from aiokafka import AIOKafkaConsumer
-
 from src.gateways.message_broker.base import BaseMessageConsumer
+
+logger = logging.getLogger()
 
 
 @dataclass
@@ -24,4 +26,5 @@ class KafkaMessageConsumer(BaseMessageConsumer):
         await self.consumer.stop()
 
     async def start(self):
+        logger.info("Starting consumer")
         await self.consumer.start()
