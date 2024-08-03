@@ -1,4 +1,5 @@
 import logging
+import uuid
 from dataclasses import dataclass
 
 from src.application.common.password_hasher import BasePasswordHasher
@@ -7,7 +8,7 @@ from src.application.contracts.commands.user import RegisterCommand
 from src.domain.events.auth import NewUserRegistered
 from src.domain.exceptions.user import UserAlreadyExistsException
 from src.domain.users.repository import BaseUserRepository
-from src.domain.users.user import User
+from src.domain.users.user import User, UserConfirmation
 from src.infrastructure.message_broker.base import BaseMessageBroker
 from src.infrastructure.message_broker.converters import convert_event_to_broker_message
 
@@ -34,7 +35,12 @@ class RegisterUseCase:
             email=command.email,
         )
         await self.user_repository.create(user)
-        event = NewUserRegistered(email=user.email, confirmation_link="test")
+        user_confirmation = UserConfirmation.create(user_id=user.id)
+        event = NewUserRegistered(
+            email=user.email,
+            message_text="Here is the link to confirm your account\n",
+            confirmation_link=f"http://localhost/api/v1/auth/confirmation?id={user_confirmation.id}&code={user_confirmation.code}",
+        )
         try:
             await self.message_broker.send_message(
                 topic=self.broker_topic,

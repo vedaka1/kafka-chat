@@ -1,15 +1,17 @@
 import uuid
 from dataclasses import dataclass
 
+from pydantic import BaseModel, EmailStr
+
 from src.application.contracts.common.pagination import PaginationQuery
 from src.domain.users.user import User
 
 
 @dataclass
-class RegisterCommand:
+class RegisterCommand(BaseModel):
     username: str
     password: str
-    email: str
+    email: EmailStr
 
 
 @dataclass

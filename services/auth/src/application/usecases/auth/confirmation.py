@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 
-from src.domain.users.repository import BaseUserRepository
-from src.infrastructure.message_broker.base import BaseMessageBroker
+from src.application.contracts.commands.user import UserConfirmationCommand
 
 
 @dataclass
 class UserConfirmationUseCase:
 
-    async def execute(self):
-        pass
+    async def execute(self, command: UserConfirmationCommand):
+        return {"id": command.id, "code": command.code}

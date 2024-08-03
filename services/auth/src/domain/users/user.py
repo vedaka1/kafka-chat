@@ -36,7 +36,7 @@ class UserConfirmation:
 
     @staticmethod
     def create(user_id: uuid.UUID) -> "UserConfirmation":
-        return User(
+        return UserConfirmation(
             id=uuid.uuid4(),
             user_id=user_id,
             code=uuid.uuid4(),

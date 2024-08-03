@@ -11,6 +11,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
     build: 
       context: ./services/auth/
       dockerfile: ./Dockerfile
@@ -42,6 +44,23 @@ services:
     volumes:
       - ./services/users/src:/app/src
     command: sh -c "uvicorn src.main:create_app --host 0.0.0.0 --port 8000 --reload"
+
+  notifications-service:
+    container_name: notifications-service
+    hostname: notifications
+    depends_on:
+      kafka:
+        condition: service_healthy
+    build: 
+      context: ./services/notifications/
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./services/notifications/.env.production
+    networks:
+      - internal
+    volumes:
+      - ./services/notifications/app/:/app/
+    command: sh -c "python ./main.py"
 
   nginx:
     container_name: nginx
@@ -105,6 +124,10 @@ services:
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     healthcheck: 
       test: nc -z localhost 29092
+      interval: 10s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
     networks:
       - internal
 

@@ -61,10 +61,10 @@ async def certs() -> APIResponse[Cert]:
     )
 
 
-@router.post("/confirmation", summary="Confirms a user")
+@router.get("/confirmation", summary="Confirms a user")
 async def confirmation(
     confirmation_interactor: FromDishka[UserConfirmationUseCase],
-    command: UserConfirmationCommand,
+    command: UserConfirmationCommand = Depends(),
 ) -> APIResponse:
-    await confirmation_interactor.execute(command)
-    return APIResponse(ok=True)
+    data = await confirmation_interactor.execute(command)
+    return APIResponse(ok=True, data=data)

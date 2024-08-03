@@ -115,6 +115,7 @@ class UseCasesProvider(Provider):
     get_users_list = provide(GetUsersListUseCase)
     register = provide(RegisterUseCase)
     login = provide(LoginUseCase)
+    confirmation = provide(UserConfirmationUseCase)
 
 
 @lru_cache(1)
