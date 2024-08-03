@@ -37,3 +37,9 @@ class UpdateUserCommand:
 @dataclass
 class GetUsersListCommand:
     pagiantion: PaginationQuery
+
+
+@dataclass
+class UserConfirmationCommand:
+    id: uuid.UUID
+    code: uuid.UUID

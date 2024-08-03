@@ -9,7 +9,6 @@ from src.application.contracts.common.cert import Cert, CertsResponse
 from src.application.contracts.common.response import APIResponse
 from src.application.contracts.responses.user import UserOut
 from src.application.usecases.auth import *
-from src.application.usecases.auth.login import LoginUseCase
 from src.infrastructure.config import settings
 
 router = APIRouter(
@@ -60,3 +59,12 @@ async def certs() -> APIResponse[Cert]:
     return APIResponse(
         ok=True, data=Cert(alg="RS256", kty="RSA", key=settings.jwt.PUBLIC_KEY)
     )
+
+
+@router.post("/confirmation", summary="Confirms a user")
+async def confirmation(
+    confirmation_interactor: FromDishka[UserConfirmationUseCase],
+    command: UserConfirmationCommand,
+) -> APIResponse:
+    await confirmation_interactor.execute(command)
+    return APIResponse(ok=True)

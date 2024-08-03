@@ -46,4 +46,4 @@ class APIResponse(Generic[TData]):
 class ErrorAPIResponse:
     ok: bool
     error_code: int
-    details: str
+    detail: str

@@ -41,9 +41,7 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
         return param
 
 
-oauth2_scheme = OAuth2PasswordBearerWithCookie(
-    "http://auth.service:8000/api/v1/auth/login"
-)
+oauth2_scheme = OAuth2PasswordBearerWithCookie("http://localhost/api/v1/auth/login")
 
 
 async def auth_required(

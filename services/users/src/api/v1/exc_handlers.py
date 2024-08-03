@@ -5,7 +5,10 @@ from src.domain.exceptions import ApplicationException
 
 
 async def app_exc_handler(request: Request, exc: ApplicationException) -> JSONResponse:
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"ok": False, "error_code": exc.status_code, "detail": exc.message},
+    )
 
 
 def init_exc_handlers(app: FastAPI) -> None:

@@ -5,6 +5,7 @@ from multiprocessing import Queue
 from typing import AsyncGenerator
 
 import logging_loki
+from aiokafka import AIOKafkaProducer
 from dishka import (
     AsyncContainer,
     Provider,
@@ -28,6 +29,8 @@ from src.infrastructure.authentication.id_provider import JwtTokenIdProvider
 from src.infrastructure.authentication.jwt_processor import JwtTokenProcessor
 from src.infrastructure.authentication.password_hasher import PasswordHasher
 from src.infrastructure.config import settings
+from src.infrastructure.message_broker.base import BaseMessageBroker
+from src.infrastructure.message_broker.broker import KafkaMessageBroker
 from src.infrastructure.persistence.main import create_engine, create_session_factory
 from src.infrastructure.persistence.repositories import UserRepository
 from src.infrastructure.persistence.transaction import TransactionManager
@@ -62,6 +65,12 @@ class SettingsProvider(Provider):
     @provide(scope=Scope.APP)
     def session_factory(self, engine: AsyncEngine) -> async_sessionmaker:
         return create_session_factory(engine)
+
+    @provide(scope=Scope.APP)
+    def broker(self) -> BaseMessageBroker:
+        return KafkaMessageBroker(
+            producer=AIOKafkaProducer(bootstrap_servers=settings.KAFKA_URL),
+        )
 
 
 class SecurityProvider(Provider):

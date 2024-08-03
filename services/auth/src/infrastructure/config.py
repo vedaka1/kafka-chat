@@ -24,6 +24,7 @@ class JwtConfig:
 
 class Config:
     MODE: str = os.environ.get("MODE", default="DEV")
+    KAFKA_URL: str = os.environ.get("KAFKA_URL", default="kafka:29092")
 
     db: DBConfig = DBConfig()
     jwt: JwtConfig = JwtConfig()

@@ -1,5 +1,6 @@
 import uuid
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 
 @dataclass
@@ -22,4 +23,23 @@ class User:
             is_active=True,
             is_verified=False,
             is_superuser=False,
+        )
+
+
+@dataclass
+class UserConfirmation:
+    id: uuid.UUID
+    user_id: uuid.UUID
+    code: uuid.UUID
+    expired_at: datetime
+    is_used: bool = False
+
+    @staticmethod
+    def create(user_id: uuid.UUID) -> "UserConfirmation":
+        return User(
+            id=uuid.uuid4(),
+            user_id=user_id,
+            code=uuid.uuid4(),
+            expired_at=datetime.now() + timedelta(minutes=10),
+            is_used=False,
         )
