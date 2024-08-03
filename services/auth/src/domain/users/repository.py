@@ -2,7 +2,7 @@ import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from src.domain.users.user import User
+from src.domain.users.user import User, UserConfirmation
 
 
 @dataclass
@@ -30,3 +30,22 @@ class BaseUserRepository(ABC):
 
     @abstractmethod
     async def count(self) -> int | None: ...
+
+
+@dataclass
+class BaseUserConfirmationRepository(ABC):
+    @abstractmethod
+    async def create(self, user_confirmation: UserConfirmation) -> None: ...
+
+    @abstractmethod
+    async def update(
+        self, confirmation_id: uuid.UUID, user_confirmation: UserConfirmation
+    ) -> None: ...
+
+    @abstractmethod
+    async def delete(self, confirmation_id: uuid.UUID) -> None: ...
+
+    @abstractmethod
+    async def get_by_id(
+        self, confirmation_id: uuid.UUID
+    ) -> UserConfirmation | None: ...

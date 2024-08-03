@@ -7,7 +7,10 @@ from src.application.common.transaction import BaseTransactionManager
 from src.application.contracts.commands.user import RegisterCommand
 from src.domain.events.auth import NewUserRegistered
 from src.domain.exceptions.user import UserAlreadyExistsException
-from src.domain.users.repository import BaseUserRepository
+from src.domain.users.repository import (
+    BaseUserConfirmationRepository,
+    BaseUserRepository,
+)
 from src.domain.users.user import User, UserConfirmation
 from src.infrastructure.message_broker.base import BaseMessageBroker
 from src.infrastructure.message_broker.converters import convert_event_to_broker_message
@@ -20,6 +23,7 @@ class RegisterUseCase:
     user_repository: BaseUserRepository
     password_hasher: BasePasswordHasher
     user_repository: BaseUserRepository
+    user_confirmation_repository: BaseUserConfirmationRepository
     message_broker: BaseMessageBroker
     transaction_manager: BaseTransactionManager
     broker_topic = "notifications"
@@ -36,6 +40,7 @@ class RegisterUseCase:
         )
         await self.user_repository.create(user)
         user_confirmation = UserConfirmation.create(user_id=user.id)
+        await self.user_confirmation_repository.create(user_confirmation)
         event = NewUserRegistered(
             email=user.email,
             message_text="Here is the link to confirm your account\n",

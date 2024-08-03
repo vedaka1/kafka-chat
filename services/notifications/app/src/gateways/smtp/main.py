@@ -20,6 +20,9 @@ class BaseSMTPServer(ABC):
     @abstractmethod
     async def stop(self): ...
 
+    @abstractmethod
+    async def check_connection(self): ...
+
 
 @dataclass
 class SyncSMTPServer(BaseSMTPServer):
@@ -69,3 +72,7 @@ class AsyncSMTPServer(BaseSMTPServer):
 
     async def stop(self) -> None:
         await self.server.quit()
+
+    async def check_connection(self):
+        if not self.server.is_connected:
+            await self.server.connect()

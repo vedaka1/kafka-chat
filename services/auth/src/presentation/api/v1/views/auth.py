@@ -66,5 +66,5 @@ async def confirmation(
     confirmation_interactor: FromDishka[UserConfirmationUseCase],
     command: UserConfirmationCommand = Depends(),
 ) -> APIResponse:
-    data = await confirmation_interactor.execute(command)
-    return APIResponse(ok=True, data=data)
+    await confirmation_interactor.execute(command)
+    return APIResponse(ok=True)

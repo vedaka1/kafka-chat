@@ -31,3 +31,21 @@ class UserAlreadyExistsException(ApplicationException):
 class TokenExpiredException(ApplicationException):
     status_code: int = 404
     message: str = "Your access token has expired"
+
+
+@dataclass(eq=False, init=False)
+class UserConfirmationCodeNotFound(ApplicationException):
+    status_code: int = 404
+    message: str = "User confirmation code not found"
+
+
+@dataclass(eq=False, init=False)
+class UserConfirmationCodeExpired(ApplicationException):
+    status_code: int = 404
+    message: str = "Your confirmation code has expired"
+
+
+@dataclass(eq=False, init=False)
+class UserConfirmationCodeInvalid(ApplicationException):
+    status_code: int = 404
+    message: str = "Your confirmation code is invalid"

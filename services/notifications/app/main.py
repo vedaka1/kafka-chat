@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from aiosmtplib import SMTPException
+from aiosmtplib import SMTPException, SMTPServerDisconnected
 from src.core.container import get_container, init_logger
 from src.domain.events import NewUserRegistered
 from src.gateways.message_broker.base import BaseMessageConsumer
@@ -12,12 +12,15 @@ async def send_message(
     message: dict, smtp_server: BaseSMTPServer, logger: logging.Logger
 ):
     try:
+        await smtp_server.check_connection()
         event = NewUserRegistered(**message)
         message_content = f"{event.message_text} {event.confirmation_link}"
         message = smtp_server.create_message(
             content=message_content, to_address=event.email
         )
         await smtp_server.send_email(message=message)
+    except SMTPServerDisconnected as e:
+        await smtp_server.start()
     except SMTPException as e:
         logger.error(e)
 

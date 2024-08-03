@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import TIMESTAMP, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.infrastructure.persistence.models.base import Base
@@ -14,5 +15,7 @@ class UserConfirmationModelDB(Base):
         ForeignKey("users.id", ondelete="CASCADE")
     )
     code: Mapped[uuid.UUID] = mapped_column(nullable=False)
-    expired_at: Mapped[int] = mapped_column(nullable=False)
+    expired_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=False), nullable=False
+    )
     is_used: Mapped[bool] = mapped_column(default=False)

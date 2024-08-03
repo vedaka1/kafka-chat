@@ -24,7 +24,10 @@ from src.application.common.transaction import BaseTransactionManager
 from src.application.usecases.auth import *
 from src.application.usecases.auth.login import LoginUseCase
 from src.application.usecases.users import *
-from src.domain.users.repository import BaseUserRepository
+from src.domain.users.repository import (
+    BaseUserConfirmationRepository,
+    BaseUserRepository,
+)
 from src.infrastructure.authentication.id_provider import JwtTokenIdProvider
 from src.infrastructure.authentication.jwt_processor import JwtTokenProcessor
 from src.infrastructure.authentication.password_hasher import PasswordHasher
@@ -33,6 +36,7 @@ from src.infrastructure.message_broker.base import BaseMessageBroker
 from src.infrastructure.message_broker.broker import KafkaMessageBroker
 from src.infrastructure.persistence.main import create_engine, create_session_factory
 from src.infrastructure.persistence.repositories import UserRepository
+from src.infrastructure.persistence.repositories.user import UserConfirmationRepository
 from src.infrastructure.persistence.transaction import TransactionManager
 
 
@@ -107,6 +111,9 @@ class DatabaseAdaptersProvider(Provider):
 
     unit_of_work = provide(TransactionManager, provides=BaseTransactionManager)
     user_repository = provide(UserRepository, provides=BaseUserRepository)
+    user_confirmation_repository = provide(
+        UserConfirmationRepository, provides=BaseUserConfirmationRepository
+    )
 
 
 class UseCasesProvider(Provider):
