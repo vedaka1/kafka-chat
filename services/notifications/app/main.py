@@ -46,7 +46,6 @@ async def main():
         logger.info("Stopping consumer")
         await consumer.stop_consuming()
         await consumer.close()
-        logger.info("Stopping smtp server")
         await smtp_server.stop()
 
 

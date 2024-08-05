@@ -14,8 +14,6 @@ class DBConfig:
 
 
 class Config:
-    MODE: str = os.environ.get("MODE", default="DEV")
-
     db: DBConfig = DBConfig()
 
 

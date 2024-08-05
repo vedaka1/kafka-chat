@@ -3,7 +3,6 @@ from typing import Annotated
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
-
 from src.application.contracts.commands.user import *
 from src.application.contracts.common.cert import Cert, CertsResponse
 from src.application.contracts.common.response import APIResponse
@@ -61,7 +60,7 @@ async def certs() -> APIResponse[Cert]:
     )
 
 
-@router.get("/confirmation", summary="Confirms a user")
+@router.get("/confirmation", summary="Confirms the user by the code from email")
 async def confirmation(
     confirmation_interactor: FromDishka[UserConfirmationUseCase],
     command: UserConfirmationCommand = Depends(),

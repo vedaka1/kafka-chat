@@ -11,13 +11,12 @@
 * Generate private and public key via RS256 algorithm, set auth environment variables `./services/auth/.env.production`
     
     ```python
-    MODE=DEV
-
     POSTGRES_HOST=postgres
     POSTGRES_PORT=5432
     POSTGRES_USER=
     POSTGRES_PASSWORD=
-    POSTGRES_DB=
+    POSTGRES_DB=kafkachat
+
     KAFKA_URL=kafka:29092
 
     PRIVATE_KEY=
@@ -25,8 +24,6 @@
     ```
     Set users environment variables `./services/users/.env.production`
     ```python
-    MODE=DEV
-
     POSTGRES_HOST=postgres
     POSTGRES_PORT=5432
     POSTGRES_USER=
@@ -41,9 +38,8 @@
     SMTP_EMAIL=
     SMTP_SUBJECT=
 
-    KAFKA_URL=
+    KAFKA_URL=kafka:29092
     ```
-
     ### Development
     * Run `make app` or `docker compose up -d` in the project directory
     ### Production

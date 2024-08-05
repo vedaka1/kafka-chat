@@ -8,3 +8,5 @@ __pycache__
 *.pyc
 ./bgtasks
 test.py
+*.key
+*.crt

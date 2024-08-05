@@ -18,7 +18,6 @@ class UserConfirmationUseCase:
 
     async def execute(self, command: UserConfirmationCommand) -> None:
         confirmation = await self.user_confirmation_repository.get_by_id(command.id)
-        print(confirmation)
         if not confirmation:
             raise UserConfirmationCodeNotFound
         if confirmation.expired_at < datetime.now():
