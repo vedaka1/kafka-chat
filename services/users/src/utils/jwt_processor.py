@@ -13,7 +13,7 @@ from src.utils.common import cache_result
 @dataclass
 class BaseJwtTokenProcessor(ABC):
     @abstractmethod
-    def validate_token(self, token: str) -> uuid.UUID | None: ...
+    async def validate_token(self, token: str) -> uuid.UUID | None: ...
 
 
 @cache_result
@@ -42,4 +42,4 @@ class JwtTokenProcessor(BaseJwtTokenProcessor):
         except jwt.ExpiredSignatureError:
             raise TokenExpiredException
         except (jwt.DecodeError, ValueError, KeyError):
-            return ApplicationException
+            raise ApplicationException

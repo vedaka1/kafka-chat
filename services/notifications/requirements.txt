@@ -1,0 +1,7 @@
+aiokafka==0.11.0 ; python_version >= "3.12" and python_version < "4.0"
+aiosmtplib==3.0.2 ; python_version >= "3.12" and python_version < "4.0"
+async-timeout==4.0.3 ; python_version >= "3.12" and python_version < "4.0"
+dishka==1.2.0 ; python_version >= "3.12" and python_version < "4.0"
+orjson==3.10.6 ; python_version >= "3.12" and python_version < "4.0"
+packaging==24.1 ; python_version >= "3.12" and python_version < "4.0"
+typing-extensions==4.12.2 ; python_version >= "3.12" and python_version < "4.0"

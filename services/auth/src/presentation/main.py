@@ -47,7 +47,7 @@ def create_app() -> FastAPI:
     api_v1 = FastAPI(
         title="NeuroMesh v1",
         description="NeuroMesh REST API v1",
-        debug=True,
+        # debug=True,
         # lifespan=lifespan,
     )
     api_v1.add_middleware(

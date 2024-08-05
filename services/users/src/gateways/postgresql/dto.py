@@ -18,7 +18,7 @@ class BaseDto(ABC):
 
 @dataclass
 class UserDto(BaseDto):
-    id: uuid.UUID
+    id: uuid.UUID | None
     username: str
     hashed_password: str
     email: str
@@ -37,9 +37,9 @@ class UserDto(BaseDto):
             username=data.get("username"),
             hashed_password=data.get("hashed_password"),
             email=data.get("email"),
-            is_active=data["is_active"],
-            is_verified=data["is_verified"],
-            is_superuser=data["is_superuser"],
+            is_active=data.get("is_active"),
+            is_verified=data.get("is_verified"),
+            is_superuser=data.get("is_superuser"),
         )
 
     def to_entity(self) -> User:
@@ -54,7 +54,7 @@ class UserDto(BaseDto):
         )
 
     @staticmethod
-    def from_entity(entity: User) -> "UserDto":
+    def from_entity(entity: User | UserModel) -> "UserDto":
         return UserDto(
             id=entity.id,
             username=entity.username,

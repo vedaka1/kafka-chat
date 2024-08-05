@@ -11,25 +11,25 @@ class UserNotFoundException(ApplicationException):
 
 @dataclass(eq=False, init=False)
 class UserInvalidCredentialsException(ApplicationException):
-    status_code: int = 404
+    status_code: int = 400
     message: str = "Email or password is incorrect"
 
 
 @dataclass(eq=False, init=False)
 class UserIsNotAuthorizedException(ApplicationException):
-    status_code: int = 404
-    message: str = "You are not authorized"
+    status_code: int = 401
+    message: str = "Not authorized"
 
 
 @dataclass(eq=False, init=False)
 class UserAlreadyExistsException(ApplicationException):
-    status_code: int = 400
+    status_code: int = 409
     message: str = "User already exists"
 
 
 @dataclass(eq=False, init=False)
 class TokenExpiredException(ApplicationException):
-    status_code: int = 404
+    status_code: int = 401
     message: str = "Your access token has expired"
 
 
@@ -41,11 +41,11 @@ class UserConfirmationCodeNotFound(ApplicationException):
 
 @dataclass(eq=False, init=False)
 class UserConfirmationCodeExpired(ApplicationException):
-    status_code: int = 404
+    status_code: int = 401
     message: str = "Your confirmation code has expired"
 
 
 @dataclass(eq=False, init=False)
 class UserConfirmationCodeInvalid(ApplicationException):
-    status_code: int = 404
+    status_code: int = 400
     message: str = "Your confirmation code is invalid"

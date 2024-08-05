@@ -6,7 +6,6 @@
 .pytest_cache
 __pycache__
 *.pyc
-./bgtasks
-test.py
 *.key
 *.crt
+test.py

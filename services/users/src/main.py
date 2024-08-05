@@ -1,5 +1,6 @@
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.v1.exc_handlers import init_exc_handlers
 from src.api.v1.router import api_router as api_router_v1
@@ -17,5 +18,17 @@ def create_app():
     init_di(api_v1)
     api_v1.include_router(api_router_v1)
     init_exc_handlers(api_v1)
+    api_v1.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost"],
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "HEAD", "OPTIONS", "DELETE", "PUT", "PATCH"],
+        allow_headers=[
+            "Access-Control-Allow-Headers",
+            "Content-Type",
+            "Authorization",
+            "Access-Control-Allow-Origin",
+        ],
+    )
     app.mount("/api/v1", api_v1)
     return app

@@ -64,7 +64,7 @@ class UserRepository(BaseUserRepository):
         query = (
             update(UserModel)
             .where(UserModel.id == user.id)
-            .values(name=user.name, content=user.content, updated_at=user.updated_at)
+            .values(username=user.username)
         )
         await self.session.execute(query)
         await self.session.commit()
@@ -107,13 +107,19 @@ class UserRepository(BaseUserRepository):
 
     async def count_many(self, search: str | None = None) -> int:
         if search:
-            query = select(func.count()).where(
-                UserModel.username.like("{0}".format(search.lower()))
+            query = (
+                select(func.count())
+                .select_from(UserModel)
+                .where(
+                    UserModel.username.ilike(
+                        "%{0}%".format(r"%%".join(search.lower().split()))
+                    )
+                )
             )
         else:
-            query = select(func.count())
-
+            query = select(func.count()).select_from(UserModel)
         result = await self.session.execute(query)
-        count = result.scalar()
-
-        return count if count else 0
+        count = result.scalars().one_or_none()
+        if not count:
+            return 0
+        return count

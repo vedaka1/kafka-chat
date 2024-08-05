@@ -20,7 +20,6 @@ logger = logging.getLogger()
 
 @dataclass
 class RegisterUseCase:
-    user_repository: BaseUserRepository
     password_hasher: BasePasswordHasher
     user_repository: BaseUserRepository
     user_confirmation_repository: BaseUserConfirmationRepository
@@ -43,14 +42,16 @@ class RegisterUseCase:
         await self.user_confirmation_repository.create(user_confirmation)
         event = NewUserRegistered(
             email=user.email,
-            message_text="Here is the link to confirm your account\n",
-            confirmation_link=f"http://localhost/api/v1/auth/confirmation?id={user_confirmation.id}&code={user_confirmation.code}",
+            message_text="Here is the link to confirm your account<br>",
+            confirmation_link="<a href='http://localhost/api/v1/auth/confirmation?id={0}&code={1}'>Confirm</a>".format(
+                user_confirmation.id, user_confirmation.code
+            ),
         )
         try:
             await self.message_broker.send_message(
                 topic=self.broker_topic,
                 value=convert_event_to_broker_message(event),
-                key=str(event.id).encode(),
+                key=str(event.id),
             )
         except Exception as e:
             logger.error(e)

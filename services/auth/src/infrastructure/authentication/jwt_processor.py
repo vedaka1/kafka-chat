@@ -38,4 +38,4 @@ class JwtTokenProcessor(BaseJwtTokenProcessor):
         except jwt.ExpiredSignatureError:
             raise TokenExpiredException
         except (jwt.DecodeError, ValueError, KeyError):
-            return ApplicationException
+            raise ApplicationException

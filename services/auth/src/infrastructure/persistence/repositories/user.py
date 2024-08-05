@@ -98,10 +98,13 @@ class UserRepository(BaseUserRepository):
         data = result.mappings().all()
         return [User(**item) for item in data]
 
-    async def count(self) -> int | None:
+    async def count(self) -> int:
         query = text("""SELECT COUNT(*) FROM users;""")
         result = await self.session.execute(query)
-        return result.mappings().first()["count"]
+        data = result.mappings().one_or_none()
+        if not data:
+            return 0
+        return data["count"]
 
 
 @dataclass

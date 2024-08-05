@@ -23,7 +23,6 @@ from src.application.common.password_hasher import BasePasswordHasher
 from src.application.common.transaction import BaseTransactionManager
 from src.application.usecases.auth import *
 from src.application.usecases.auth.login import LoginUseCase
-from src.application.usecases.users import *
 from src.domain.users.repository import (
     BaseUserConfirmationRepository,
     BaseUserRepository,
@@ -119,7 +118,6 @@ class DatabaseAdaptersProvider(Provider):
 class UseCasesProvider(Provider):
     scope = Scope.REQUEST
 
-    get_users_list = provide(GetUsersListUseCase)
     register = provide(RegisterUseCase)
     login = provide(LoginUseCase)
     confirmation = provide(UserConfirmationUseCase)

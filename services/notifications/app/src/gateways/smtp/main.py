@@ -3,6 +3,8 @@ import smtplib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from email.message import EmailMessage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 import aiosmtplib
 
@@ -15,10 +17,10 @@ class BaseSMTPServer(ABC):
     async def start(self): ...
 
     @abstractmethod
-    def create_message(self, content: str, to_address: str) -> EmailMessage: ...
+    def create_message(self, content: str, to_address: str) -> MIMEMultipart: ...
 
     @abstractmethod
-    async def send_email(self, message: EmailMessage) -> None: ...
+    async def send_email(self, message: MIMEMultipart) -> None: ...
 
     @abstractmethod
     async def stop(self): ...
@@ -63,16 +65,21 @@ class AsyncSMTPServer(BaseSMTPServer):
         logger.info("Starting smtp server")
         await self.server.connect()
 
-    def create_message(self, content: str, to_address: str) -> EmailMessage:
-        message = EmailMessage()
+    def create_message(self, content: str, to_address: str) -> MIMEMultipart:
+        message = MIMEMultipart()
         message["Subject"] = self.subject
         message["From"] = self.from_address
         message["To"] = to_address
-        message.set_content(content)
+        html = MIMEText(content, "html")
+        message.attach(html)
         return message
 
-    async def send_email(self, message: EmailMessage) -> None:
-        return await self.server.send_message(message)
+    async def send_email(self, message: MIMEMultipart) -> None:
+        return await self.server.sendmail(
+            self.from_address,
+            message["To"],
+            message.as_string(),
+        )
 
     async def stop(self) -> None:
         logger.info("Stopping smtp server")
