@@ -15,4 +15,4 @@ prod:
 prod-down:
 	$(DC) -f $(PROD) down
 
-.PHONY: app app-down prod prod-down
+.PHONY: app app-down prod prod-down certs

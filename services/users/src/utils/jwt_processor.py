@@ -6,7 +6,8 @@ from uuid import UUID
 import aiohttp
 import jwt
 
-from src.domain.exceptions import ApplicationException, TokenExpiredException
+from src.domain.exceptions.auth import TokenExpiredException
+from src.domain.exceptions.base import ApplicationException
 from src.utils.common import cache_result
 
 

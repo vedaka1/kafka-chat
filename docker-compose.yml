@@ -26,8 +26,8 @@ services:
       - ./services/auth/src:/app/src
     command: sh -c "alembic upgrade head && uvicorn src.presentation.main:create_app --host 0.0.0.0 --port 8000 --reload"
 
-  user-service:
-    container_name: user-service
+  users-service:
+    container_name: users-service
     hostname: users
     depends_on:
       postgres:
@@ -70,7 +70,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - auth-service
-      - user-service
+      - users-service
     expose:
       - 80
       - 443

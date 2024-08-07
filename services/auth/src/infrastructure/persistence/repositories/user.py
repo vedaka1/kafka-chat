@@ -1,6 +1,5 @@
 import uuid
 from dataclasses import dataclass
-from typing import Coroutine
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession

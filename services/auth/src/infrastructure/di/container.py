@@ -21,8 +21,11 @@ from src.application.common.id_provider import BaseIdProvider
 from src.application.common.jwt_processor import BaseJwtTokenProcessor
 from src.application.common.password_hasher import BasePasswordHasher
 from src.application.common.transaction import BaseTransactionManager
-from src.application.usecases.auth import *
-from src.application.usecases.auth.login import LoginUseCase
+from src.application.usecases.auth import (
+    LoginUseCase,
+    RegisterUseCase,
+    UserConfirmationUseCase,
+)
 from src.domain.users.repository import (
     BaseUserConfirmationRepository,
     BaseUserRepository,
@@ -30,13 +33,13 @@ from src.domain.users.repository import (
 from src.infrastructure.authentication.id_provider import JwtTokenIdProvider
 from src.infrastructure.authentication.jwt_processor import JwtTokenProcessor
 from src.infrastructure.authentication.password_hasher import PasswordHasher
-from src.infrastructure.config import settings
 from src.infrastructure.message_broker.base import BaseMessageBroker
 from src.infrastructure.message_broker.broker import KafkaMessageBroker
 from src.infrastructure.persistence.main import create_engine, create_session_factory
 from src.infrastructure.persistence.repositories import UserRepository
 from src.infrastructure.persistence.repositories.user import UserConfirmationRepository
 from src.infrastructure.persistence.transaction import TransactionManager
+from src.infrastructure.settings import settings
 
 
 @lru_cache(1)

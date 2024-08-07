@@ -1,9 +1,15 @@
 import uuid
 from dataclasses import dataclass
 
-from src.api.v1.schemas import ListPaginatedResponse, PaginationOutSchema, UserOut
-from src.domain.commands import GetUsersListCommand
-from src.domain.services import BaseUserService
+from src.api.v1.schemas import (
+    FriendOut,
+    ListPaginatedResponse,
+    PaginationOutSchema,
+    UserOut,
+)
+from src.application.commands.user import GetUserFriendsListCommand, GetUsersListCommand
+from src.domain.users.entities import Friends
+from src.domain.users.service import BaseFriendsService, BaseUserService
 
 
 @dataclass
@@ -53,4 +59,36 @@ class GetUserUseCase:
             is_active=user.is_active,
             is_verified=user.is_verified,
             is_superuser=user.is_superuser,
+        )
+
+
+@dataclass
+class GetUserFriendsListUseCase:
+    user_service: BaseUserService
+    friends_service: BaseFriendsService
+
+    async def execute(
+        self, user_id: uuid.UUID, command: GetUserFriendsListCommand
+    ) -> ListPaginatedResponse[FriendOut]:
+        await self.user_service.get_by_id(id=user_id)
+        friends = await self.friends_service.get_by_user_id(
+            user_id=user_id,
+            limit=command.pagiantion.limit,
+            offset=command.pagiantion.offset,
+        )
+        count = await self.friends_service.count_many(user_id=user_id)
+        return ListPaginatedResponse(
+            items=[
+                FriendOut(
+                    id=friend.id,
+                    friend_id=friend.friend_id,
+                    created_at=friend.created_at,
+                )
+                for friend in friends
+            ],
+            pagination=PaginationOutSchema(
+                limit=command.pagiantion.limit,
+                offset=command.pagiantion.offset,
+                total=count,
+            ),
         )

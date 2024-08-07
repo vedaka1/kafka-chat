@@ -5,7 +5,7 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.infrastructure.di.container import get_container, init_logger, init_loki_logger
+from src.infrastructure.di.container import get_container, init_logger
 from src.infrastructure.message_broker.base import BaseMessageBroker
 from src.presentation.api.v1.router import api_router as api_router_v1
 from src.presentation.exc_handlers import init_exc_handlers

@@ -37,6 +37,13 @@ class UserOut:
 
 
 @dataclass
+class FriendOut:
+    id: int
+    friend_id: uuid.UUID
+    created_at: datetime
+
+
+@dataclass
 class APIResponse(Generic[TData]):
     ok: bool
     data: TData | dict | list = field(default_factory=dict)

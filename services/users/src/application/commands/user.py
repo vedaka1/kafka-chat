@@ -2,7 +2,7 @@ import uuid
 from dataclasses import dataclass
 
 from src.api.v1.schemas import PaginationQuery
-from src.domain.entities import User
+from src.domain.users.entities import User
 
 
 @dataclass
@@ -20,3 +20,19 @@ class UpdateUserCommand:
 class GetUsersListCommand:
     search: str | None
     pagiantion: PaginationQuery
+
+
+@dataclass
+class GetUserFriendsListCommand:
+    # user_id: uuid.UUID
+    pagiantion: PaginationQuery
+
+
+@dataclass
+class AddFriendCommand:
+    friend_id: uuid.UUID
+
+
+@dataclass
+class DeleteFriendCommand:
+    friend_id: uuid.UUID

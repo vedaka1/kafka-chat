@@ -7,7 +7,7 @@ import jwt
 from src.application.common.jwt_processor import BaseJwtTokenProcessor
 from src.domain.exceptions.base import ApplicationException
 from src.domain.exceptions.user import TokenExpiredException
-from src.infrastructure.config import settings
+from src.infrastructure.settings import settings
 
 
 @dataclass

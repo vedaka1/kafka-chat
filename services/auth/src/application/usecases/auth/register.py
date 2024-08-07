@@ -1,5 +1,4 @@
 import logging
-import uuid
 from dataclasses import dataclass
 
 from src.application.common.password_hasher import BasePasswordHasher
@@ -51,10 +50,10 @@ class RegisterUseCase:
             await self.message_broker.send_message(
                 topic=self.broker_topic,
                 value=convert_event_to_broker_message(event),
-                key=str(event.id),
+                key=str(event.id).encode(),
             )
         except Exception as e:
-            logger.error(e)
+            logger.error("Failed to send message to broker: {0}".format(e))
 
         await self.transaction_manager.commit()
         return None

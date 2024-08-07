@@ -14,16 +14,28 @@ from dishka import (
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
+from src.application.services.friends import FriendsService
+from src.application.services.user import UserService
+from src.application.usecases.create import AddFriendUseCase
+from src.application.usecases.delete import DeleteFriendUseCase
+from src.application.usecases.get import (
+    GetUserFriendsListUseCase,
+    GetUsersListUseCase,
+    GetUserUseCase,
+)
 from src.core.settings import settings
-from src.domain.services import BaseUserService
-from src.domain.use_cases import GetUsersListUseCase, GetUserUseCase
+from src.domain.users.repository import BaseFriendsRepository
+from src.domain.users.service import BaseFriendsService, BaseUserService
 from src.gateways.postgresql.database import create_engine, create_session_factory
-from src.gateways.postgresql.repositories import BaseUserRepository, UserRepository
+from src.gateways.postgresql.repositories import (
+    BaseUserRepository,
+    FriendsRepository,
+    UserRepository,
+)
 from src.gateways.postgresql.transaction import (
     BaseTransactionManager,
     TransactionManager,
 )
-from src.services.user import UserService
 from src.utils.id_provider import BaseIdProvider, JwtTokenIdProvider
 from src.utils.jwt_processor import BaseJwtTokenProcessor, JwtTokenProcessor
 
@@ -70,6 +82,7 @@ class DatabaseAdaptersProvider(Provider):
 
     unit_of_work = provide(TransactionManager, provides=BaseTransactionManager)
     user_repository = provide(UserRepository, provides=BaseUserRepository)
+    friends_repository = provide(FriendsRepository, provides=BaseFriendsRepository)
 
 
 class UseCasesProvider(Provider):
@@ -77,12 +90,16 @@ class UseCasesProvider(Provider):
 
     get_users_list = provide(GetUsersListUseCase)
     get_user = provide(GetUserUseCase)
+    add_friend = provide(AddFriendUseCase)
+    delete_friend = provide(DeleteFriendUseCase)
+    get_user_friends_list = provide(GetUserFriendsListUseCase)
 
 
 class ServiceProvider(Provider):
     scope = Scope.REQUEST
 
     user_service = provide(UserService, provides=BaseUserService)
+    friends_service = provide(FriendsService, provides=BaseFriendsService)
 
 
 @lru_cache(1)
@@ -91,7 +108,7 @@ def get_container() -> AsyncContainer:
         SettingsProvider(),
         DatabaseConfigurationProvider(),
         DatabaseAdaptersProvider(),
-        UseCasesProvider(),
-        SecurityProvider(),
         ServiceProvider(),
+        SecurityProvider(),
+        UseCasesProvider(),
     )

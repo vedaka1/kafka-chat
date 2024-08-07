@@ -3,12 +3,25 @@ from typing import Annotated
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
-from src.application.contracts.commands.user import *
-from src.application.contracts.common.cert import Cert, CertsResponse
+
+from src.application.contracts.commands.user import (
+    DeleteUserCommand,
+    GetUserCommand,
+    GetUsersListCommand,
+    LoginCommand,
+    RegisterCommand,
+    UpdateUserCommand,
+    UserConfirmationCommand,
+)
+from src.application.contracts.common.cert import Cert
 from src.application.contracts.common.response import APIResponse
 from src.application.contracts.responses.user import UserOut
-from src.application.usecases.auth import *
-from src.infrastructure.config import settings
+from src.application.usecases.auth import (
+    LoginUseCase,
+    RegisterUseCase,
+    UserConfirmationUseCase,
+)
+from src.infrastructure.settings import settings
 
 router = APIRouter(
     tags=["Auth"],
@@ -55,9 +68,8 @@ async def logout(
 
 @router.get("/certs", summary="A list of public keys to validate JWT Token")
 async def certs() -> APIResponse[Cert]:
-    return APIResponse(
-        ok=True, data=Cert(alg="RS256", kty="RSA", key=settings.jwt.PUBLIC_KEY)
-    )
+    cert = Cert(alg="RS256", kty="RSA", key=settings.jwt.PUBLIC_KEY)
+    return APIResponse(ok=True, data=cert)
 
 
 @router.get("/confirmation", summary="Confirms the user by the code from email")

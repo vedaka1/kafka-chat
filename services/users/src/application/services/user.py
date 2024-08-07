@@ -1,9 +1,9 @@
 import uuid
 from dataclasses import dataclass
 
-from src.domain.entities import User
-from src.domain.exceptions import UserNotFoundException
-from src.domain.services import BaseUserService
+from src.domain.exceptions.user import UserNotFoundException
+from src.domain.users.entities import User
+from src.domain.users.service import BaseUserService
 from src.gateways.postgresql.dto import UserDto
 from src.gateways.postgresql.repositories import BaseUserRepository
 

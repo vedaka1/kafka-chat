@@ -3,7 +3,12 @@ from datetime import datetime
 
 from src.application.common.transaction import BaseTransactionManager
 from src.application.contracts.commands.user import UserConfirmationCommand
-from src.domain.exceptions.user import *
+from src.domain.exceptions.user import (
+    UserConfirmationCodeExpired,
+    UserConfirmationCodeInvalid,
+    UserConfirmationCodeNotFound,
+    UserNotFoundException,
+)
 from src.domain.users.repository import (
     BaseUserConfirmationRepository,
     BaseUserRepository,

@@ -1,63 +1,21 @@
 import uuid
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
 
 from sqlalchemy import delete, func, insert, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.gateways.postgresql.dto import UserDto
-from src.gateways.postgresql.models import UserModel
-
-
-@dataclass
-class BaseUserRepository(ABC):
-    session: AsyncSession
-
-    @abstractmethod
-    async def create(self, user: UserDto) -> UserDto:
-        pass
-
-    @abstractmethod
-    async def delete(self, id: uuid.UUID) -> None:
-        pass
-
-    @abstractmethod
-    async def update(self, user: UserDto) -> None:
-        pass
-
-    @abstractmethod
-    async def get_by_id(self, id: uuid.UUID) -> UserDto | None:
-        pass
-
-    @abstractmethod
-    async def get_all(self, limit: int = 10, offset: int = 0) -> list[UserDto]:
-        pass
-
-    @abstractmethod
-    async def find_many(
-        self,
-        limit: int = 10,
-        offset: int = 0,
-        search: str | None = None,
-    ) -> list[UserDto]:
-        pass
-
-    @abstractmethod
-    async def count_many(self, search: str | None = None) -> int:
-        pass
+from src.domain.users.repository import BaseFriendsRepository, BaseUserRepository
+from src.gateways.postgresql.dto import FriendsDto, UserDto
+from src.gateways.postgresql.models import FriendsModel, UserModel
 
 
 class UserRepository(BaseUserRepository):
     async def create(self, user: UserDto) -> UserDto:
         query = insert(UserModel).values(user.dump())
         await self.session.execute(query)
-        await self.session.commit()
         return user
 
     async def delete(self, id: uuid.UUID) -> None:
         query = delete(UserModel).where(UserModel.id == id)
         await self.session.execute(query)
-        await self.session.commit()
         return None
 
     async def update(self, user: UserDto) -> None:
@@ -67,7 +25,6 @@ class UserRepository(BaseUserRepository):
             .values(username=user.username)
         )
         await self.session.execute(query)
-        await self.session.commit()
         return None
 
     async def get_by_id(self, id: uuid.UUID) -> UserDto | None:
@@ -123,3 +80,73 @@ class UserRepository(BaseUserRepository):
         if not count:
             return 0
         return count
+
+
+class FriendsRepository(BaseFriendsRepository):
+    async def create(self, friends: FriendsDto) -> None:
+        query = insert(FriendsModel).values(
+            {
+                "user_id": friends.user_id,
+                "friend_id": friends.friend_id,
+                "created_at": friends.created_at,
+            }
+        )
+        await self.session.execute(query)
+        return None
+
+    async def delete(self, id: int) -> None:
+        query = delete(FriendsModel).where(FriendsModel.id == id)
+        await self.session.execute(query)
+        return None
+
+    async def update(self, friends: FriendsDto) -> None:
+        query = update(FriendsModel).where(FriendsModel.id == id).values(friends.dump())
+        await self.session.execute(query)
+        return None
+
+    async def get_by_id(self, id: int) -> FriendsDto | None:
+        query = select(FriendsModel).where(FriendsModel.id == id)
+        result = await self.session.execute(query)
+        friends = result.scalar_one_or_none()
+        return FriendsDto.from_entity(friends) if friends else None
+
+    async def get_by_user_id(
+        self, user_id: uuid.UUID, offset: int, limit: int
+    ) -> list[FriendsDto]:
+        query = (
+            select(FriendsModel)
+            .where(FriendsModel.user_id == user_id)
+            .limit(limit)
+            .offset(offset)
+        )
+        result = await self.session.execute(query)
+        data = result.scalars().all()
+        return [FriendsDto.from_entity(item) for item in data]
+
+    async def get_all(self, limit: int = 10, offset: int = 0) -> list[FriendsDto]:
+        query = select(FriendsModel).limit(limit).offset(offset)
+        result = await self.session.execute(query)
+        data = result.scalars().all()
+        return [FriendsDto.from_entity(item) for item in data]
+
+    async def count_many(self, user_id: uuid.UUID) -> int:
+        query = (
+            select(func.count())
+            .select_from(FriendsModel)
+            .where(FriendsModel.user_id == user_id)
+        )
+        result = await self.session.execute(query)
+        count = result.scalars().one_or_none()
+        return count if count else 0
+
+    async def get_by_user_and_friend_id(
+        self, user_id: uuid.UUID, friend_id: uuid.UUID
+    ) -> FriendsDto | None:
+        query = (
+            select(FriendsModel)
+            .where(FriendsModel.user_id == user_id)
+            .where(FriendsModel.friend_id == friend_id)
+        )
+        result = await self.session.execute(query)
+        friends = result.scalar_one_or_none()
+        return FriendsDto.from_entity(friends) if friends else None

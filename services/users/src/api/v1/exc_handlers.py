@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
 
-from src.domain.exceptions import ApplicationException
+from src.domain.exceptions.base import ApplicationException
 
 logger = logging.getLogger()
 

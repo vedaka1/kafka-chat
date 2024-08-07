@@ -6,9 +6,9 @@ from src.application.common.transaction import BaseTransactionManager
 from src.application.contracts.commands.user import LoginCommand
 from src.application.contracts.responses.user import UserOut
 from src.domain.common.token import Token
-from src.domain.exceptions.user import *
+from src.domain.exceptions.user import UserInvalidCredentialsException
 from src.domain.users.repository import BaseUserRepository
-from src.infrastructure.config import settings
+from src.infrastructure.settings import settings
 
 
 @dataclass

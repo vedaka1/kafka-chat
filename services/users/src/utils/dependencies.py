@@ -2,14 +2,14 @@ from typing import Annotated, Dict, Optional
 from uuid import UUID
 
 from dishka import AsyncContainer
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, Request
 from fastapi.openapi.models import OAuthFlowPassword
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security import OAuth2
 from fastapi.security.utils import get_authorization_scheme_param
 
 from src.core.container import get_container
-from src.domain.exceptions import UserIsNotAuthorizedException
+from src.domain.exceptions.auth import UserIsNotAuthorizedException
 from src.utils.jwt_processor import BaseJwtTokenProcessor
 
 
