@@ -2,7 +2,7 @@ import os
 from typing import Any
 
 
-def cache_result(func):
+def cache_async_result(func):
     cache = {}
 
     async def wrapper(*args, **kwargs):

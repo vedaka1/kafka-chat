@@ -2,14 +2,11 @@ import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.gateways.postgresql.dto import FriendsDto, UserDto
 
 
 @dataclass
 class BaseUserRepository(ABC):
-    session: AsyncSession
 
     @abstractmethod
     async def create(self, user: UserDto) -> UserDto:
@@ -47,7 +44,6 @@ class BaseUserRepository(ABC):
 
 @dataclass
 class BaseFriendsRepository(ABC):
-    session: AsyncSession
 
     @abstractmethod
     async def create(self, friends: FriendsDto) -> None:
@@ -64,6 +60,11 @@ class BaseFriendsRepository(ABC):
     @abstractmethod
     async def get_by_id(self, id: int) -> FriendsDto | None:
         pass
+
+    @abstractmethod
+    async def get_friends_by_user_id(
+        self, user_id: uuid.UUID, offset: int, limit: int
+    ) -> list[UserDto]: ...
 
     @abstractmethod
     async def get_by_user_id(

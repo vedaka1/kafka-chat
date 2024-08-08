@@ -1,4 +1,3 @@
-import uuid
 from uuid import UUID
 
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
@@ -10,19 +9,8 @@ from src.api.v1.schemas import (
     PaginationQuery,
     UserOut,
 )
-from src.application.commands.user import (
-    AddFriendCommand,
-    GetUserFriendsListCommand,
-    GetUsersListCommand,
-)
-from src.application.usecases.create import AddFriendUseCase
-from src.application.usecases.delete import DeleteFriendUseCase
-from src.application.usecases.get import (
-    GetUserFriendsListUseCase,
-    GetUsersListUseCase,
-    GetUserUseCase,
-)
-from src.domain.users.entities import Friends
+from src.application.commands.user import GetUserFriendsListCommand, GetUsersListCommand
+from src.application.usecases.get import GetUsersListUseCase, GetUserUseCase
 from src.utils.dependencies import get_current_user_id
 
 router = APIRouter(
@@ -39,7 +27,7 @@ def get_pagination(limit=10, offset=0) -> PaginationQuery:
 def get_user_friends_list_command(
     pagination: PaginationQuery = Depends(get_pagination),
 ) -> GetUserFriendsListCommand:
-    return GetUserFriendsListCommand(pagiantion=pagination)
+    return GetUserFriendsListCommand(pagination=pagination)
 
 
 def get_users_list_command(

@@ -25,7 +25,7 @@ class GetUsersListCommand:
 @dataclass
 class GetUserFriendsListCommand:
     # user_id: uuid.UUID
-    pagiantion: PaginationQuery
+    pagination: PaginationQuery
 
 
 @dataclass

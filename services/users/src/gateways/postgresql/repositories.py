@@ -1,6 +1,7 @@
 import uuid
 
-from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy import delete, func, insert, select, text, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.users.repository import BaseFriendsRepository, BaseUserRepository
 from src.gateways.postgresql.dto import FriendsDto, UserDto
@@ -8,6 +9,8 @@ from src.gateways.postgresql.models import FriendsModel, UserModel
 
 
 class UserRepository(BaseUserRepository):
+    session: AsyncSession
+
     async def create(self, user: UserDto) -> UserDto:
         query = insert(UserModel).values(user.dump())
         await self.session.execute(query)
@@ -83,6 +86,8 @@ class UserRepository(BaseUserRepository):
 
 
 class FriendsRepository(BaseFriendsRepository):
+    session: AsyncSession
+
     async def create(self, friends: FriendsDto) -> None:
         query = insert(FriendsModel).values(
             {
@@ -122,6 +127,21 @@ class FriendsRepository(BaseFriendsRepository):
         result = await self.session.execute(query)
         data = result.scalars().all()
         return [FriendsDto.from_entity(item) for item in data]
+
+    async def get_friends_by_user_id(
+        self, user_id: uuid.UUID, offset: int, limit: int
+    ) -> list[UserDto]:
+        query = (
+            select(UserModel)
+            .select_from(FriendsModel)
+            .join(UserModel, FriendsModel.user_id == UserModel.id)
+            .where(FriendsModel.user_id == user_id)
+            .limit(limit)
+            .offset(offset)
+        )
+        result = await self.session.execute(query)
+        data = result.scalars().all()
+        return [UserDto.from_entity(item) for item in data]
 
     async def get_all(self, limit: int = 10, offset: int = 0) -> list[FriendsDto]:
         query = select(FriendsModel).limit(limit).offset(offset)

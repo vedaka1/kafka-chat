@@ -1,4 +1,3 @@
-import uuid
 from uuid import UUID
 
 from dishka.integrations.fastapi import DishkaRoute, FromDishka
@@ -6,24 +5,14 @@ from fastapi import APIRouter, Depends
 
 from src.api.v1.schemas import (
     APIResponse,
-    FriendOut,
     ListPaginatedResponse,
     PaginationQuery,
     UserOut,
 )
-from src.application.commands.user import (
-    AddFriendCommand,
-    GetUserFriendsListCommand,
-    GetUsersListCommand,
-)
+from src.application.commands.user import AddFriendCommand, GetUserFriendsListCommand
 from src.application.usecases.create import AddFriendUseCase
 from src.application.usecases.delete import DeleteFriendUseCase
-from src.application.usecases.get import (
-    GetUserFriendsListUseCase,
-    GetUsersListUseCase,
-    GetUserUseCase,
-)
-from src.domain.users.entities import Friends
+from src.application.usecases.get import GetUserFriendsListUseCase
 from src.utils.dependencies import get_current_user_id
 
 router = APIRouter(
@@ -40,7 +29,7 @@ def get_pagination(limit=10, offset=0) -> PaginationQuery:
 def get_user_friends_list_command(
     pagination: PaginationQuery = Depends(get_pagination),
 ) -> GetUserFriendsListCommand:
-    return GetUserFriendsListCommand(pagiantion=pagination)
+    return GetUserFriendsListCommand(pagination=pagination)
 
 
 @router.get(
@@ -51,7 +40,7 @@ async def get_user_friends_list(
     get_friends_interactor: FromDishka[GetUserFriendsListUseCase],
     user_id: UUID = Depends(get_current_user_id),
     command: GetUserFriendsListCommand = Depends(get_user_friends_list_command),
-) -> APIResponse[ListPaginatedResponse[FriendOut]]:
+) -> APIResponse[ListPaginatedResponse[UserOut]]:
     response = await get_friends_interactor.execute(user_id=user_id, command=command)
     return APIResponse(ok=True, data=response)
 

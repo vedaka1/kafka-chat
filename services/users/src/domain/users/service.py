@@ -56,6 +56,11 @@ class BaseFriendsService(ABC):
         pass
 
     @abstractmethod
+    async def get_friends_by_user_id(
+        self, user_id: uuid.UUID, offset: int, limit: int
+    ) -> list[User]: ...
+
+    @abstractmethod
     async def get_by_user_and_friend_id(
         self, user_id: uuid.UUID, friend_id: uuid.UUID
     ) -> Friends | None:

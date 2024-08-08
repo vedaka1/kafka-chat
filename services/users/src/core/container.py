@@ -3,17 +3,8 @@ import logging.handlers
 from functools import lru_cache
 from typing import AsyncGenerator
 
-from dishka import (
-    AsyncContainer,
-    Provider,
-    Scope,
-    from_context,
-    make_async_container,
-    provide,
-)
-from fastapi import Request
+from dishka import AsyncContainer, Provider, Scope, make_async_container, provide
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
-
 from src.application.services.friends import FriendsService
 from src.application.services.user import UserService
 from src.application.usecases.create import AddFriendUseCase
@@ -23,20 +14,14 @@ from src.application.usecases.get import (
     GetUsersListUseCase,
     GetUserUseCase,
 )
-from src.core.settings import settings
-from src.domain.users.repository import BaseFriendsRepository
+from src.domain.users.repository import BaseFriendsRepository, BaseUserRepository
 from src.domain.users.service import BaseFriendsService, BaseUserService
 from src.gateways.postgresql.database import create_engine, create_session_factory
-from src.gateways.postgresql.repositories import (
-    BaseUserRepository,
-    FriendsRepository,
-    UserRepository,
-)
+from src.gateways.postgresql.repositories import FriendsRepository, UserRepository
 from src.gateways.postgresql.transaction import (
     BaseTransactionManager,
     TransactionManager,
 )
-from src.utils.id_provider import BaseIdProvider, JwtTokenIdProvider
 from src.utils.jwt_processor import BaseJwtTokenProcessor, JwtTokenProcessor
 
 

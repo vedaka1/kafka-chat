@@ -6,7 +6,7 @@ from src.domain.exceptions.friends import (
     FriendNotFoundException,
 )
 from src.domain.exceptions.user import UserNotFoundException
-from src.domain.users.entities import Friends
+from src.domain.users.entities import Friends, User
 from src.domain.users.repository import BaseFriendsRepository
 from src.domain.users.service import BaseFriendsService
 from src.gateways.postgresql.dto import FriendsDto
@@ -42,6 +42,14 @@ class FriendsService(BaseFriendsService):
         if not dto:
             raise FriendNotFoundException
         return dto.to_entity()
+
+    async def get_friends_by_user_id(
+        self, user_id: uuid.UUID, offset: int, limit: int
+    ) -> list[User]:
+        dto_iter = await self.friends_repository.get_friends_by_user_id(
+            user_id=user_id, offset=offset, limit=limit
+        )
+        return [dto.to_entity() for dto in dto_iter]
 
     async def get_by_user_id(
         self,
